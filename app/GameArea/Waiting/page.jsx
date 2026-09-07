@@ -6,10 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSocket } from "@/Context/contextapi.js";
 
 const SEATS = [
-  { key: "north", suit: "♠", label: "North", pos: { top: "-8%", left: "50%", transform: "translateX(-50%)" } },
-  { key: "east", suit: "♥", label: "East", pos: { top: "50%", right: "-2%", transform: "translateY(-50%)" } },
-  { key: "south", suit: "♦", label: "South", pos: { bottom: "-8%", left: "50%", transform: "translateX(-50%)" } },
-  { key: "west", suit: "♣", label: "West", pos: { top: "50%", left: "-2%", transform: "translateY(-50%)" } },
+  { key: "Player-1", suit: "♠", label: "Player-1", pos: { top: "-8%", left: "50%", transform: "translateX(-50%)" } },
+  { key: "Player-2", suit: "♥", label: "Player-2", pos: { top: "50%", right: "-2%", transform: "translateY(-50%)" } },
+  { key: "Player-3", suit: "♦", label: "Player-3", pos: { bottom: "-8%", left: "50%", transform: "translateX(-50%)" } },
+  { key: "Player-4", suit: "♣", label: "Player-4", pos: { top: "50%", left: "-2%", transform: "translateY(-50%)" } },
 ];
 
 function Seat({ seat, player }) {
@@ -185,7 +185,7 @@ const WaitingPage = () => {
           </div>
 
           {SEATS.map((seat, i) => (
-            <Seat key={seat.key} seat={seat} player={players[i]} />
+            <Seat key={seat.key} seat={seat} player={players[i]}  />
           ))}
         </div>
 
