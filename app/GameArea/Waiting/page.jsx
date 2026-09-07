@@ -191,19 +191,10 @@ const WaitingPage = () => {
 
         {/* Footer */}
         <div className="mt-14 flex items-center justify-between gap-4">
-          <p className="text-xs leading-relaxed max-w-xs text-[#F3EFE388]">
+          <p className="text-xl leading-relaxed max-w-xs text-[#F3EFE388]">
             A hand can only be dealt once all four seats are occupied.
           </p>
-          <button
-            disabled={filledCount < 4}
-            className="rounded-full px-6 py-2.5 text-xs uppercase tracking-widest font-medium transition-all border-[1.5px] border-[#C9A227] disabled:opacity-60"
-            style={{
-              color: filledCount >= 4 ? "#171412" : "#F3EFE3",
-              background: filledCount >= 4 ? "#C9A227" : "transparent",
-            }}
-          >
-            Waiting
-          </button>
+         
         </div>
       </div>
     </div>
