@@ -365,7 +365,7 @@ app.prepare().then(() => {
       console.error(err);
       process.exit(1);
     })
-    .listen(port, () => {
-      console.log(`> Ready on http://${hostname}:${port}`);
-    });
+    .listen(3000, '0.0.0.0', 2048, () => {
+  console.log('Server ready');
+});
 });

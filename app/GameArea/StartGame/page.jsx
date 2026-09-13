@@ -21,7 +21,7 @@ function Card({
 }) {
   const flipTransform = faceDown ? "rotateY(180deg)" : "rotateY(0deg)";
   const poseTransform = isSelected
-    ? `translateZ(${44 + liftZ}px) translateY(-14px) rotateX(0deg)`
+    ? `translateZ(${44 + liftZ}px) translateY(-24px) rotateX(0deg)` // /// newly added: adjusted translateY for better 3D pop
     : `translateZ(${liftZ}px) rotateX(${restRotateX}deg)`;
 
   return (
@@ -277,14 +277,19 @@ const Startgame = () => {
           -webkit-backface-visibility: hidden;
         }
         .card-3d-interactive:hover .card-3d-pose {
-          transform: translateZ(20px) rotateX(0deg) !important;
+          transform: translateZ(25px) rotateX(0deg) !important;
         }
         .table-3d-perspective {
-          perspective: 1400px;
+          perspective: 2000px; /// newly added: increased perspective for deeper 3D effect
         }
         .table-3d-plane {
           transform-style: preserve-3d;
-          transform: rotateX(10deg);
+          transform: rotateX(25deg); /// newly added: steeper tilt for 3D table feel
+        }
+        /// newly added: 3D Felt Table Effect
+        .table-rim {
+          box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
+          border: 12px solid #2a1a0a;
         }
         .hand-3d-perspective {
           perspective: 1100px;
@@ -310,23 +315,33 @@ const Startgame = () => {
         style={{ boxShadow: "inset 0 0 180px 70px rgba(0,0,0,0.75)" }}
       />
 
-      <div className="relative max-w-7xl mx-auto p-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="relative max-w-7xl mx-auto p-6 z-10">
+        {/* /// newly added: Adjusted Header for clean 3D space */}
+        <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="text-2xl font-semibold uppercase tracking-[0.3em] text-[#e8d9a0] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+            <h1 className="text-3xl font-black uppercase tracking-[0.4em] text-[#e8d9a0] drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
               Cassino
             </h1>
             <div className="text-[10px] uppercase tracking-[0.3em] text-[#c9a227]/50 font-sans mt-1">
               {gameState ? `Table · ${gameState.roomId || "In Game"}` : "Waiting for room"}
             </div>
           </div>
-          <button
-            className="rounded-md border border-[#c9a227]/60 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.25em] font-sans text-[#e8d9a0] hover:bg-[#c9a227]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            onClick={drawFromDeck}
-            disabled={!gameState || !isMyTurn || myHand.length >= 5}
-          >
-            Draw
-          </button>
+          
+          {/* /// newly added: 3D Deck Mockup to replace simple button */}
+          <div className="relative group" onClick={drawFromDeck}>
+             <div className="absolute -inset-2 bg-[#c9a227]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+             <button
+              className="relative rounded-lg border-2 border-[#c9a227]/60 bg-gradient-to-br from-[#0f4a34] to-[#062318] w-16 h-24 shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform hover:-translate-y-2 transition-transform disabled:opacity-50 flex items-center justify-center overflow-hidden"
+              disabled={!gameState || !isMyTurn || myHand.length >= 5}
+            >
+              <div className="absolute inset-1 border border-[#c9a227]/20 rounded" />
+              <span className="text-[9px] font-bold uppercase tracking-tighter text-[#c9a227] leading-none text-center">
+                Draw<br/>Card
+              </span>
+              {/* Stacked effect */}
+              <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#c9a227]/30 border-l border-black/50" />
+            </button>
+          </div>
         </div>
 
         {!gameState ? (
@@ -334,124 +349,93 @@ const Startgame = () => {
             Waiting for game state...
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Players Status Header */}
-            <section className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {gameState.players?.map((playerId) => (
                 <div
                   key={playerId}
-                  className={`rounded-xl border p-4 transition-all ${
+                  className={`rounded-xl border p-3 transition-all ${
                     currentPlayerId === playerId
-                      ? "border-[#c9a227]/70 bg-[#c9a227]/[0.06] shadow-[0_0_20px_rgba(201,162,39,0.08)]"
-                      : "border-[#c9a227]/15 bg-black/20"
+                      ? "border-[#c9a227]/70 bg-[#c9a227]/[0.06] shadow-[0_0_20px_rgba(201,162,39,0.08)] scale-105"
+                      : "border-[#c9a227]/15 bg-black/20 opacity-80"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#e8d9a0]/60 font-sans truncate max-w-[130px]">
-                      {playerId === myId ? `${playerId} (You)` : playerId}
+                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#e8d9a0]/60 font-sans truncate">
+                      {playerId === myId ? `YOU` : `P: ${playerId.slice(0,4)}`}
                     </span>
                     {currentPlayerId === playerId && (
-                      <span className="text-[9px] uppercase font-bold text-[#c9a227] bg-[#c9a227]/15 px-2 py-0.5 rounded-full font-sans">
-                        Turn
-                      </span>
+                      <div className="w-2 h-2 rounded-full bg-[#c9a227] animate-pulse" />
                     )}
                   </div>
-                  <div className="mt-3 flex gap-2 items-baseline">
-                    <span className="text-xl font-black text-[#e8d9a0]">{roomScore[playerId] ?? 0}</span>
-                    <span className="text-[10px] text-[#e8d9a0]/40 font-sans">pts</span>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {(gameState.captureStacks?.[playerId] ?? []).slice(-3).map((stackCard) => (
-                      <span
-                        key={stackCard.id}
-                        className={`px-1.5 py-0.5 rounded text-[9px] bg-black/30 border border-[#c9a227]/20 font-mono ${
-                          isRed(stackCard.suit) ? "text-[#c9784f]" : "text-[#e8d9a0]/70"
-                        }`}
-                      >
-                        {stackCard.rank}{stackCard.suit}
-                      </span>
-                    ))}
+                  <div className="mt-1 flex gap-2 items-baseline">
+                    <span className="text-lg font-black text-[#e8d9a0]">{roomScore[playerId] ?? 0}</span>
+                    <span className="text-[8px] text-[#e8d9a0]/40 font-sans uppercase">Points</span>
                   </div>
                 </div>
               ))}
             </section>
 
-            {/* Table Drop Zone Area — rendered as a tilted 3D plane */}
-            <section className="rounded-[2rem] border border-[#c9a227]/25 bg-black/20 p-6">
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]/50 font-sans">The Table</div>
-                  <div className="text-xs text-[#e8d9a0]/60 font-sans mt-1">
-                    {selectedCardId && isMyTurn
-                      ? "Tap a matching card to capture, or open felt to throw."
-                      : `${gameState.table?.length ?? 0} cards in play`}
-                  </div>
-                </div>
-                <div className="text-[10px] uppercase tracking-[0.2em] text-[#e8d9a0]/40 font-sans">
-                  Deck {gameState.deck?.length ?? gameState.deckCount ?? 0}
-                </div>
-              </div>
+            {/* /// newly added: 3D Table Container with Rim and Felt texture */}
+            <section className="table-3d-perspective py-8">
+              <div
+                onClick={handleTableAreaClick}
+                className={`table-3d-plane table-rim relative mx-auto max-w-5xl min-h-[400px] rounded-[50%] transition-all p-12 overflow-hidden ${
+                  selectedCardId && isMyTurn
+                    ? "bg-[#11402e] cursor-pointer ring-4 ring-[#c9a227]/30"
+                    : "bg-gradient-to-b from-[#134e35] to-[#0a2b1d]"
+                }`}
+              >
+                {/* /// newly added: Table texture pattern */}
+                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{backgroundImage: 'radial-gradient(#000 1px, transparent 0)', backgroundSize: '24px 24px'}} />
+                
+                <div className="relative z-10 flex flex-wrap gap-6 justify-center items-center min-h-[300px]">
+                  <AnimatePresence>
+                    {(gameState.table ?? []).map((card, tIdx) => {
+                      const isMatchingRank = selectedCard && selectedCard.rank === card.rank;
+                      return (
+                        <motion.div
+                          layout
+                          key={card.id}
+                          initial={{ opacity: 0, scale: 0.5, z: 100 }}
+                          animate={{ opacity: 1, scale: 1, z: 0 }}
+                          exit={{ opacity: 0, scale: 0.2, y: -100 }}
+                          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                          onClick={handleTableCardClick}
+                        >
+                          <Card
+                            card={card}
+                            isInteractive={Boolean(selectedCardId && isMyTurn)}
+                            isSelected={Boolean(isMatchingRank && isMyTurn)}
+                            liftZ={(tIdx % 3) * 2}
+                            restRotateX={0} // /// newly added: lying flat on table
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
 
-              <div className="table-3d-perspective">
-                <div
-                  onClick={handleTableAreaClick}
-                  className={`table-3d-plane min-h-44 rounded-2xl border transition-all p-6 ${
-                    selectedCardId && isMyTurn
-                      ? "border-[#c9a227]/70 bg-[#c9a227]/[0.05] cursor-pointer ring-1 ring-[#c9a227]/20"
-                      : "border-[#c9a227]/10 bg-gradient-to-br from-[#0a1f16] to-[#07120d]"
-                  }`}
-                >
-                  <div className="flex flex-wrap gap-4 min-h-28 items-center">
-                    <AnimatePresence>
-                      {(gameState.table ?? []).map((card, tIdx) => {
-                        const isMatchingRank = selectedCard && selectedCard.rank === card.rank;
-                        return (
-                          <motion.div
-                            layout
-                            key={card.id}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.6 }}
-                            transition={{ duration: 0.2 }}
-                            onClick={handleTableCardClick}
-                          >
-                            <Card
-                              card={card}
-                              isInteractive={Boolean(selectedCardId && isMyTurn)}
-                              isSelected={Boolean(isMatchingRank && isMyTurn)}
-                              liftZ={(tIdx % 3) * 2}
-                              restRotateX={4}
-                            />
-                          </motion.div>
-                        );
-                      })}
-                    </AnimatePresence>
-
-                    {selectedCardId && isMyTurn && (
-                      <div className="flex items-center justify-center border-2 border-dashed border-[#c9a227]/30 rounded-lg w-14 h-20 text-[#c9a227]/50 text-[9px] font-bold uppercase tracking-wider text-center p-1 pointer-events-none font-sans">
-                        Throw
-                      </div>
-                    )}
-                  </div>
+                  {selectedCardId && isMyTurn && (
+                    <motion.div 
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                      className="border-4 border-dashed border-[#c9a227]/20 rounded-xl w-20 h-28 flex items-center justify-center text-[#c9a227]/40 text-xs font-black uppercase tracking-widest text-center p-2 font-sans"
+                    >
+                      Play Card
+                    </motion.div>
+                  )}
                 </div>
               </div>
             </section>
 
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-20">
               {/* Your Hand — first-person 3D fan */}
-              <section className="rounded-[2rem] border border-[#c9a227]/25 bg-black/20 p-6 pb-10">
-                <div className="mb-4">
-                  <div className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]/50 font-sans">Your Hand</div>
-                  <div className="text-xs text-[#e8d9a0]/60 font-sans mt-1">
-                    {isMyTurn
-                      ? selectedCardId
-                        ? "Card raised. Tap the table to throw or capture."
-                        : "Tap a card to raise it"
-                      : "Waiting for your turn..."}
-                  </div>
+              <section className="bg-transparent p-2">
+                <div className="text-center mb-6">
+                  <span className="text-[10px] uppercase tracking-[0.5em] text-[#c9a227] font-bold">Your Hand</span>
                 </div>
 
-                <div className="hand-3d-perspective relative flex justify-center pt-6 min-h-[9rem]">
+                <div className="hand-3d-perspective relative flex justify-center min-h-[10rem]">
                   <div className="hand-3d-plane relative w-full flex justify-center">
                     <AnimatePresence mode="popLayout">
                       {(myHand || []).map((card, idx) => {
@@ -461,10 +445,9 @@ const Startgame = () => {
                           <motion.div
                             layout
                             key={card.id}
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.25 }}
+                            initial={{ opacity: 0, y: 100, rotateX: 45 }}
+                            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                            exit={{ opacity: 0, scale: 0 }}
                             className="absolute bottom-0"
                             style={fan}
                           >
@@ -473,7 +456,7 @@ const Startgame = () => {
                               isInteractive={isMyTurn}
                               isSelected={selected}
                               onClick={() => handleHandCardClick(card.id)}
-                              restRotateX={8}
+                              restRotateX={15}
                             />
                           </motion.div>
                         );
@@ -484,9 +467,9 @@ const Startgame = () => {
               </section>
 
               {/* Capture Stacks — piled up in 3D */}
-              <section className="rounded-[2rem] border border-[#c9a227]/15 bg-black/20 p-6">
+              <section className="rounded-[2rem] border border-[#c9a227]/10 bg-black/40 p-6 shadow-2xl">
                 <div className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]/50 font-sans mb-4">Capture Stacks</div>
-                <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                   {(gameState.players ?? []).map((playerId) => {
                     const stack = gameState.captureStacks?.[playerId] ?? [];
                     const topCard = stack[stack.length - 1];
@@ -500,35 +483,37 @@ const Startgame = () => {
                       <div
                         key={playerId}
                         onClick={(e) => handleStackClick(e, playerId)}
-                        className={`rounded-xl border p-3 transition-colors ${
+                        className={`rounded-xl border p-3 transition-all ${
                           canSteal && isMyTurn
-                            ? "border-[#a3312c]/70 bg-[#a3312c]/10 cursor-pointer hover:border-[#a3312c]"
-                            : "border-[#c9a227]/10"
+                            ? "border-[#c9784f] bg-[#c9784f]/10 cursor-pointer scale-105 shadow-[0_0_15px_rgba(201,120,79,0.3)]"
+                            : "border-[#c9a227]/5 bg-black/20"
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#e8d9a0]/60 font-sans truncate max-w-[180px]">
-                            {playerId === myId ? `${playerId} (You)` : playerId}{" "}
-                            {canSteal && isMyTurn ? "· Steal" : ""}
+                        <div className="flex items-center justify-between gap-1 mb-2">
+                          <span className="text-[8px] font-bold uppercase tracking-tighter text-[#e8d9a0]/50 font-sans truncate">
+                            {playerId === myId ? `Your Stack` : `P:${playerId.slice(0,4)}`}
                           </span>
-                          <span className="text-[9px] text-[#e8d9a0]/30 font-sans">{stack.length} cards</span>
+                          <span className="text-[8px] text-[#c9a227] font-bold">{stack.length}</span>
                         </div>
-                        <div className="stack-3d-perspective mt-3 flex gap-2">
-                          <AnimatePresence>
-                            {stack.slice(-4).map((stackCard, idx) => (
-                              <motion.div
-                                layout
-                                key={`${playerId}-${stackCard.id}-${idx}`}
-                                className="relative"
-                                style={{
-                                  transformStyle: "preserve-3d",
-                                  transform: `translateZ(${idx * 4}px) translateY(${-idx * 1.5}px)`,
-                                }}
-                              >
-                                <Card card={stackCard} className="w-11 h-16 text-[10px]" restRotateX={0} />
-                              </motion.div>
-                            ))}
-                          </AnimatePresence>
+                        <div className="stack-3d-perspective flex justify-center min-h-[60px]">
+                          {stack.length > 0 ? (
+                            <div className="relative">
+                               {stack.slice(-3).map((stackCard, idx) => (
+                                <div
+                                  key={`${playerId}-${stackCard.id}-${idx}`}
+                                  className="absolute top-0 left-1/2 -translate-x-1/2"
+                                  style={{
+                                    transformStyle: "preserve-3d",
+                                    transform: `translateZ(${idx * 5}px) translateY(${-idx * 2}px) rotateZ(${idx * 2}deg)`,
+                                  }}
+                                >
+                                  <Card card={stackCard} className="w-10 h-14 text-[9px]" restRotateX={0} />
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="w-10 h-14 rounded border border-dashed border-white/5 flex items-center justify-center text-[8px] text-white/5 uppercase">Empty</div>
+                          )}
                         </div>
                       </div>
                     );
