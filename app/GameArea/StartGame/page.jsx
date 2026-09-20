@@ -453,9 +453,7 @@ const Startgame = () => {
               {/* Your Hand — first-person 3D fan */}
               <section className="bg-transparent p-2">
                 <div className="text-center mb-6">
-                  <span className="text-[10px] uppercase tracking-[0.5em] text-[#c9a227] font-bold">
-                    Your Hand
-                  </span>
+                  <span>Your Hand</span>
                 </div>
 
                 <div className="hand-3d-perspective relative flex justify-center min-h-[10rem]">
