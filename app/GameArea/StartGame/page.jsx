@@ -32,16 +32,9 @@ function Card({
         "relative w-14 h-20 select-none",
         isInteractive ? "cursor-pointer card-3d-interactive" : "",
         className,
-      ].join(" ")}
-    >
-      <div
-        className="card-3d-pose"
-        style={{ transform: poseTransform }}
-      >
-        <div
-          className="card-3d-flip"
-          style={{ transform: flipTransform }}
-        >
+      ].join(" ")}>
+      <div className="card-3d-pose" style={{ transform: poseTransform }}>
+        <div className="card-3d-flip" style={{ transform: flipTransform }}>
           {/* Back face */}
           <div
             className={[
@@ -50,11 +43,12 @@ function Card({
                 ? "border-[#c9a227] ring-2 ring-[#c9a227]/60 shadow-[0_0_16px_rgba(201,162,39,0.35)]"
                 : "border-[#c9a227]/30",
             ].join(" ")}
-            style={{ transform: "rotateY(180deg)" }}
-          >
+            style={{ transform: "rotateY(180deg)" }}>
             <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#0f4a34] to-[#062318] flex items-center justify-center">
               <div className="absolute inset-1 rounded-md border border-[#c9a227]/40" />
-              <span className="text-[10px] font-bold tracking-widest text-[#c9a227]/70">C</span>
+              <span className="text-[10px] font-bold tracking-widest text-[#c9a227]/70">
+                C
+              </span>
             </div>
           </div>
 
@@ -65,14 +59,15 @@ function Card({
               isSelected
                 ? "border-[#c9a227] ring-2 ring-[#c9a227]/60 shadow-[0_0_16px_rgba(201,162,39,0.35)]"
                 : "border-[#c9a227]/30",
-            ].join(" ")}
-          >
+            ].join(" ")}>
             <div className="absolute inset-0 rounded-lg bg-gradient-to-b from-[#fbf6e8] to-[#efe4c4]">
               <div className="flex flex-col h-full items-center justify-center">
-                <span className={`text-sm font-black leading-none ${isRed(card?.suit) ? "text-[#a3312c]" : "text-[#1a1a1a]"}`}>
+                <span
+                  className={`text-sm font-black leading-none ${isRed(card?.suit) ? "text-[#a3312c]" : "text-[#1a1a1a]"}`}>
                   {cardRankLabel(card?.rank)}
                 </span>
-                <span className={`text-xs mt-1 ${isRed(card?.suit) ? "text-[#a3312c]" : "text-[#1a1a1a]"}`}>
+                <span
+                  className={`text-xs mt-1 ${isRed(card?.suit) ? "text-[#a3312c]" : "text-[#1a1a1a]"}`}>
                   {card?.suit}
                 </span>
               </div>
@@ -93,18 +88,19 @@ const Startgame = () => {
   useEffect(() => {
     if (!socket) return undefined;
 
-    const syncRoom = () => socket.emit("room:sync", (payload) => {
-      if (!payload?.success || !payload.started) {
-        router.replace("/GameArea/Waiting");
-        return;
-      }
+    const syncRoom = () =>
+      socket.emit("room:sync", (payload) => {
+        if (!payload?.success || !payload.started) {
+          router.replace("/GameArea/Waiting");
+          return;
+        }
 
-      if (payload.gameState) {
-        setGameState(payload.gameState);
-      } else {
-        router.replace("/GameArea/Waiting");
-      }
-    });
+        if (payload.gameState) {
+          setGameState(payload.gameState);
+        } else {
+          router.replace("/GameArea/Waiting");
+        }
+      });
 
     const handleJoinSuccess = (payload) => {
       if (payload?.success) syncRoom();
@@ -147,11 +143,11 @@ const Startgame = () => {
   const isMyTurn = currentPlayerId === myId;
   const myHand = useMemo(
     () => gameState?.hands?.[myId] ?? [],
-    [gameState, myId]
+    [gameState, myId],
   );
   const selectedCard = useMemo(
     () => myHand.find((c) => c.id === selectedCardId) ?? null,
-    [myHand, selectedCardId]
+    [myHand, selectedCardId],
   );
 
   // Reset selection whenever active turn changes
@@ -164,10 +160,16 @@ const Startgame = () => {
 
   const roomScore = useMemo(() => {
     if (!gameState?.captureStacks) return {};
-    return Object.entries(gameState.captureStacks).reduce((acc, [playerId, stack]) => {
-      acc[playerId] = (stack || []).reduce((total, card) => total + (card.points ?? 0), 0);
-      return acc;
-    }, {});
+    return Object.entries(gameState.captureStacks).reduce(
+      (acc, [playerId, stack]) => {
+        acc[playerId] = (stack || []).reduce(
+          (total, card) => total + (card.points ?? 0),
+          0,
+        );
+        return acc;
+      },
+      {},
+    );
   }, [gameState]);
 
   const drawFromDeck = () => {
@@ -284,11 +286,15 @@ const Startgame = () => {
         }
         .table-3d-plane {
           transform-style: preserve-3d;
-          transform: rotateX(25deg); /// newly added: steeper tilt for 3D table feel
+          transform: rotateX(
+            25deg
+          ); /// newly added: steeper tilt for 3D table feel
         }
         /// newly added: 3D Felt Table Effect
         .table-rim {
-          box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
+          box-shadow:
+            0 20px 50px rgba(0, 0, 0, 0.8),
+            inset 0 0 20px rgba(0, 0, 0, 0.5);
           border: 12px solid #2a1a0a;
         }
         .hand-3d-perspective {
@@ -323,20 +329,23 @@ const Startgame = () => {
               Cassino
             </h1>
             <div className="text-[10px] uppercase tracking-[0.3em] text-[#c9a227]/50 font-sans mt-1">
-              {gameState ? `Table · ${gameState.roomId || "In Game"}` : "Waiting for room"}
+              {gameState
+                ? `Table · ${gameState.roomId || "In Game"}`
+                : "Waiting for room"}
             </div>
           </div>
-          
+
           {/* /// newly added: 3D Deck Mockup to replace simple button */}
           <div className="relative group" onClick={drawFromDeck}>
-             <div className="absolute -inset-2 bg-[#c9a227]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-             <button
+            <div className="absolute -inset-2 bg-[#c9a227]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <button
               className="relative rounded-lg border-2 border-[#c9a227]/60 bg-gradient-to-br from-[#0f4a34] to-[#062318] w-16 h-24 shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform hover:-translate-y-2 transition-transform disabled:opacity-50 flex items-center justify-center overflow-hidden"
-              disabled={!gameState || !isMyTurn || myHand.length >= 5}
-            >
+              disabled={!gameState || !isMyTurn || myHand.length >= 5}>
               <div className="absolute inset-1 border border-[#c9a227]/20 rounded" />
               <span className="text-[9px] font-bold uppercase tracking-tighter text-[#c9a227] leading-none text-center">
-                Draw<br/>Card
+                Draw
+                <br />
+                Card
               </span>
               {/* Stacked effect */}
               <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#c9a227]/30 border-l border-black/50" />
@@ -359,19 +368,22 @@ const Startgame = () => {
                     currentPlayerId === playerId
                       ? "border-[#c9a227]/70 bg-[#c9a227]/[0.06] shadow-[0_0_20px_rgba(201,162,39,0.08)] scale-105"
                       : "border-[#c9a227]/15 bg-black/20 opacity-80"
-                  }`}
-                >
+                  }`}>
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#e8d9a0]/60 font-sans truncate">
-                      {playerId === myId ? `YOU` : `P: ${playerId.slice(0,4)}`}
+                      {playerId === myId ? `YOU` : `P: ${playerId.slice(0, 4)}`}
                     </span>
                     {currentPlayerId === playerId && (
                       <div className="w-2 h-2 rounded-full bg-[#c9a227] animate-pulse" />
                     )}
                   </div>
                   <div className="mt-1 flex gap-2 items-baseline">
-                    <span className="text-lg font-black text-[#e8d9a0]">{roomScore[playerId] ?? 0}</span>
-                    <span className="text-[8px] text-[#e8d9a0]/40 font-sans uppercase">Points</span>
+                    <span className="text-lg font-black text-[#e8d9a0]">
+                      {roomScore[playerId] ?? 0}
+                    </span>
+                    <span className="text-[8px] text-[#e8d9a0]/40 font-sans uppercase">
+                      Points
+                    </span>
                   </div>
                 </div>
               ))}
@@ -385,15 +397,21 @@ const Startgame = () => {
                   selectedCardId && isMyTurn
                     ? "bg-[#11402e] cursor-pointer ring-4 ring-[#c9a227]/30"
                     : "bg-gradient-to-b from-[#134e35] to-[#0a2b1d]"
-                }`}
-              >
+                }`}>
                 {/* /// newly added: Table texture pattern */}
-                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{backgroundImage: 'radial-gradient(#000 1px, transparent 0)', backgroundSize: '24px 24px'}} />
-                
+                <div
+                  className="absolute inset-0 opacity-10 pointer-events-none"
+                  style={{
+                    backgroundImage: "radial-gradient(#000 1px, transparent 0)",
+                    backgroundSize: "24px 24px",
+                  }}
+                />
+
                 <div className="relative z-10 flex flex-wrap gap-6 justify-center items-center min-h-[300px]">
                   <AnimatePresence>
                     {(gameState.table ?? []).map((card, tIdx) => {
-                      const isMatchingRank = selectedCard && selectedCard.rank === card.rank;
+                      const isMatchingRank =
+                        selectedCard && selectedCard.rank === card.rank;
                       return (
                         <motion.div
                           layout
@@ -401,9 +419,12 @@ const Startgame = () => {
                           initial={{ opacity: 0, scale: 0.5, z: 100 }}
                           animate={{ opacity: 1, scale: 1, z: 0 }}
                           exit={{ opacity: 0, scale: 0.2, y: -100 }}
-                          transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                          onClick={handleTableCardClick}
-                        >
+                          transition={{
+                            type: "spring",
+                            stiffness: 200,
+                            damping: 20,
+                          }}
+                          onClick={handleTableCardClick}>
                           <Card
                             card={card}
                             isInteractive={Boolean(selectedCardId && isMyTurn)}
@@ -417,10 +438,10 @@ const Startgame = () => {
                   </AnimatePresence>
 
                   {selectedCardId && isMyTurn && (
-                    <motion.div 
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      className="border-4 border-dashed border-[#c9a227]/20 rounded-xl w-20 h-28 flex items-center justify-center text-[#c9a227]/40 text-xs font-black uppercase tracking-widest text-center p-2 font-sans"
-                    >
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="border-4 border-dashed border-[#c9a227]/20 rounded-xl w-20 h-28 flex items-center justify-center text-[#c9a227]/40 text-xs font-black uppercase tracking-widest text-center p-2 font-sans">
                       Play Card
                     </motion.div>
                   )}
@@ -432,7 +453,9 @@ const Startgame = () => {
               {/* Your Hand — first-person 3D fan */}
               <section className="bg-transparent p-2">
                 <div className="text-center mb-6">
-                  <span className="text-[10px] uppercase tracking-[0.5em] text-[#c9a227] font-bold">Your Hand</span>
+                  <span className="text-[10px] uppercase tracking-[0.5em] text-[#c9a227] font-bold">
+                    Your Hand
+                  </span>
                 </div>
 
                 <div className="hand-3d-perspective relative flex justify-center min-h-[10rem]">
@@ -449,8 +472,7 @@ const Startgame = () => {
                             animate={{ opacity: 1, y: 0, rotateX: 0 }}
                             exit={{ opacity: 0, scale: 0 }}
                             className="absolute bottom-0"
-                            style={fan}
-                          >
+                            style={fan}>
                             <Card
                               card={card}
                               isInteractive={isMyTurn}
@@ -468,7 +490,9 @@ const Startgame = () => {
 
               {/* Capture Stacks — piled up in 3D */}
               <section className="rounded-[2rem] border border-[#c9a227]/10 bg-black/40 p-6 shadow-2xl">
-                <div className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]/50 font-sans mb-4">Capture Stacks</div>
+                <div className="text-[10px] uppercase tracking-[0.35em] text-[#c9a227]/50 font-sans mb-4">
+                  Capture Stacks
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   {(gameState.players ?? []).map((playerId) => {
                     const stack = gameState.captureStacks?.[playerId] ?? [];
@@ -487,32 +511,34 @@ const Startgame = () => {
                           canSteal && isMyTurn
                             ? "border-[#c9784f] bg-[#c9784f]/10 cursor-pointer scale-105 shadow-[0_0_15px_rgba(201,120,79,0.3)]"
                             : "border-[#c9a227]/5 bg-black/20"
-                        }`}
-                      >
+                        }`}>
                         <div className="flex items-center justify-between gap-1 mb-2">
                           <span className="text-[8px] font-bold uppercase tracking-tighter text-[#e8d9a0]/50 font-sans truncate">
-                            {playerId === myId ? `Your Stack` : `P:${playerId.slice(0,4)}`}
+                            {playerId === myId
+                              ? `Your Stack`
+                              : `P:${playerId.slice(0, 4)}`}
                           </span>
-                          <span className="text-[8px] text-[#c9a227] font-bold">{stack.length}</span>
+                          <span className="text-[8px] text-[#c9a227] font-bold">
+                            {stack.length}
+                          </span>
                         </div>
                         <div className="stack-3d-perspective flex justify-center min-h-[60px]">
                           {stack.length > 0 ? (
                             <div className="relative">
-                               {stack.slice(-3).map((stackCard, idx) => (
-                                <div
-                                  key={`${playerId}-${stackCard.id}-${idx}`}
-                                  className="absolute top-0 left-1/2 -translate-x-1/2"
-                                  style={{
-                                    transformStyle: "preserve-3d",
-                                    transform: `translateZ(${idx * 5}px) translateY(${-idx * 2}px) rotateZ(${idx * 2}deg)`,
-                                  }}
-                                >
-                                  <Card card={stackCard} className="w-10 h-14 text-[9px]" restRotateX={0} />
+                              {stack.slice(-3).map((stackCard, idx) => (
+                                <div key={`${playerId}-${stackCard.id}-${idx}`}>
+                                  <Card
+                                    card={stackCard}
+                                    className="w-10 h-14 text-[9px]"
+                                    restRotateX={0}
+                                  />
                                 </div>
                               ))}
                             </div>
                           ) : (
-                            <div className="w-10 h-14 rounded border border-dashed border-white/5 flex items-center justify-center text-[8px] text-white/5 uppercase">Empty</div>
+                            <div className="w-10 h-14 rounded border border-dashed border-white/5 flex items-center justify-center text-[8px] text-white/5 uppercase">
+                              Empty
+                            </div>
                           )}
                         </div>
                       </div>
